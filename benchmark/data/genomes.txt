@@ -1,0 +1,2 @@
+# alias filename file_url
+dmel dmel-all-chromosome-r6.27.fasta.gz ftp://ftp.flybase.net/genomes/Drosophila_melanogaster/dmel_r6.27_FB2019_02/fasta/dmel-all-chromosome-r6.27.fasta.gz
