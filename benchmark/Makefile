@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 DOCKER_NAME = test2
-GENOMES_DOWNLOAD_LOG = 1_download_genomes.log
-GENOMES_INDEX_LOG = 2_make_genomes_index.log
+GENOMES_DOWNLOAD_LOG = data/1_download_genomes.log
+GENOMES_INDEX_LOG = data/2_make_genomes_index.log
 
 all: run-docker-analysis
 
@@ -16,9 +16,7 @@ run-docker-analysis:
 	docker run -v $(CURDIR):/benchmark $(DOCKER_NAME) make -C /benchmark benchmark
 
 $(GENOMES_DOWNLOAD_LOG) :
-	cd scripts; \
-	bash 1_download_genomes.sh > $@
+	bash scripts/1_download_genomes.sh > $@
 
 $(GENOMES_INDEX_LOG) : $(GENOMES_DOWNLOAD_LOG)
-	cd scripts; \
-	bash 2_make_genomes_index.sh > $@
+	bash scripts/2_make_genomes_index.sh > $@

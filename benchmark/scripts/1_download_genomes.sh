@@ -1,11 +1,10 @@
 #!/bin/bash
 
-source 0_environment.sh
+source scripts/0_environment.sh
 
-genomes="../data/genomes.txt"
-makefile_out="../data/Makefile"
+cd data
+genomes="genomes.txt"
 
-cd ../data
 while read line; do
 
   # parse the input file
@@ -18,10 +17,10 @@ while read line; do
   md5sums_file=${md5sums_url##*/}
 
   # get the genome
-  wget --no-verbose --show-progress $genome_url
+  wget --no-verbose --show-progress $genome_url -O $genome_file
 
   # get the md5sum file
-  wget --no-verbose --show-progress $md5sums_url
+  wget --no-verbose --show-progress $md5sums_url -O $md5sums_file
 
   # do the md5sum check
   grep $genome_file $md5sums_file | md5sum -c -
@@ -38,4 +37,4 @@ while read line; do
   log_message "Downloaded and extracted $genome_file"
 
 done < $genomes
-cd ../scripts
+cd ..
