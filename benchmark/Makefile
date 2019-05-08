@@ -5,7 +5,7 @@ GENOMES_INDEX_LOG = 2_make_genomes_index.log
 
 all: run-docker-analysis
 
-benchmark : genomes-index
+benchmark : $(GENOMES_DOWNLOAD_LOG) $(GENOMES_INDEX_LOG)
 
 run-docker-analysis:
 	if [[ "$(shell which docker)" == "" ]]; then \
@@ -15,12 +15,10 @@ run-docker-analysis:
 	docker build -t $(DOCKER_NAME) .
 	docker run -v $(CURDIR):/benchmark $(DOCKER_NAME) make -C /benchmark benchmark
 
-genomes-download :
+$(GENOMES_DOWNLOAD_LOG) :
 	cd scripts; \
-	bash 1_download_genomes.sh > $(GENOMES_DOWNLOAD_LOG)
-  
-$(GENOMES_DOWNLOAD_LOG) : genomes-download
+	bash 1_download_genomes.sh > $@
 
-genomes-index : $(GENOMES_DOWNLOAD_LOG)
+$(GENOMES_INDEX_LOG) : $(GENOMES_DOWNLOAD_LOG)
 	cd scripts; \
-	bash 2_make_genomes_index.sh > $(GENOMES_INDEX_LOG)
+	bash 2_make_genomes_index.sh > $@
