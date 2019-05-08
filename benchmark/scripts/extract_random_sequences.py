@@ -87,7 +87,7 @@ def output_fasta(sequences, out_fname) :
     with open(out_fname, 'w') as fout :
         for loc, sequence in sequences.items() :
             chromosome, start, end = loc
-            fout.write(">%s;%s;%s\n"%(chromosome, start, end))
+            fout.write(">%s;%s;%s\n"%(chromosome, start+1, end+1))
             fout.write("%s\n"%(sequence))
 
 if __name__ == '__main__' :
