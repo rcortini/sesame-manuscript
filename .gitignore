@@ -1,0 +1,3 @@
+benchmark/data/*.gz
+benchmark/data/*.fasta
+benchmark/data/*.fna
