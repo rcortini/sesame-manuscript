@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source 0_environment.sh
+
 genomes="../data/genomes.txt"
 makefile_out="../data/Makefile"
 
@@ -31,6 +33,9 @@ while read line; do
 
   # unzip
   gunzip $genome_file
+
+  # log
+  log_message "Downloaded and extracted $genome_file"
 
 done < $genomes
 cd ../scripts

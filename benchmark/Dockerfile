@@ -6,6 +6,7 @@ RUN apt-get update -qq &&   \
             build-essential \
             git             \
             zlib1g-dev      \
+            wget      \
 	    make
 
 # bwa
