@@ -1,3 +1,2 @@
-benchmark/data/*.gz
-benchmark/data/*.fasta
-benchmark/data/*.fna
+benchmark/data
+!benchmark/data/genomes.txt

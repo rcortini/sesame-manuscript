@@ -1,5 +1,6 @@
 #!/bin/bash
 
+genomes="../data/genomes.txt"
 
 cd ../data
 while read line; do
