@@ -2,10 +2,11 @@ SHELL := /bin/bash
 DOCKER_NAME = test2
 GENOMES_DOWNLOAD_LOG = data/1_download_genomes.log
 GENOMES_INDEX_LOG = data/2_make_genomes_index.log
+EXTRACT_RANDOM_SEQUENCES_LOG = data/3_extract_random_sequences.log
 
 all: run-docker-analysis
 
-benchmark : $(GENOMES_DOWNLOAD_LOG) $(GENOMES_INDEX_LOG)
+benchmark : $(GENOMES_DOWNLOAD_LOG) $(GENOMES_INDEX_LOG) $(EXTRACT_RANDOM_SEQUENCES_LOG)
 
 run-docker-analysis:
 	if [[ "$(shell which docker)" == "" ]]; then \
@@ -20,3 +21,6 @@ $(GENOMES_DOWNLOAD_LOG) :
 
 $(GENOMES_INDEX_LOG) : $(GENOMES_DOWNLOAD_LOG)
 	bash scripts/2_make_genomes_index.sh > $@
+
+$(EXTRACT_RANDOM_SEQUENCES_LOG) : $(GENOMES_INDEX_LOG)
+	bash scripts/3_extract_random_sequences.sh 10 50 0.1 > $@

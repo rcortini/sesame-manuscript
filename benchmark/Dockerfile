@@ -6,7 +6,9 @@ RUN apt-get update -qq &&   \
             build-essential \
             git             \
             zlib1g-dev      \
-            wget      \
+            wget            \
+            python3         \
+            python3-pip     \
 	    make
 
 # bwa
@@ -15,3 +17,6 @@ RUN cd / && \
     cd bwa && \
     make && \
     cp bwa /usr/local/bin
+
+# python packages
+RUN pip3 install biopython
