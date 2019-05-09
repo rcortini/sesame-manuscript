@@ -5,6 +5,9 @@ GENOMES_INDEX_LOG = data/2_make_genomes_index.log
 EXTRACT_RANDOM_SEQUENCES_LOG = data/3_extract_random_sequences.log
 REMAP_BACK_LOG = data/4_remap_back.log
 
+# analysis parameters
+NSEQ=50000000
+
 all: run-docker-analysis
 
 benchmark : $(GENOMES_DOWNLOAD_LOG)         \
@@ -27,7 +30,7 @@ $(GENOMES_INDEX_LOG) : $(GENOMES_DOWNLOAD_LOG)
 	bash scripts/2_make_genomes_index.sh > $@
 
 $(EXTRACT_RANDOM_SEQUENCES_LOG) : $(GENOMES_INDEX_LOG)
-	bash scripts/3_extract_random_sequences.sh 10 50 0.1 > $@
+	bash scripts/3_extract_random_sequences.sh $(NSEQ) 50 0.1 > $@
 
 $(REMAP_BACK_LOG) : $(EXTRACT_RANDOM_SEQUENCES_LOG)
-	bash scripts/4_remap_back.sh 10 50 0.1 > $@
+	bash scripts/4_remap_back.sh $(NSEQ) 50 0.1 > $@
