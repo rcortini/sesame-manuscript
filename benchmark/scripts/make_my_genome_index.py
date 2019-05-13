@@ -11,10 +11,18 @@ genome_file = sys.argv[1]
 # build output file
 out_file = '%s.myindex'%(genome_file)
 
-with open(genome_file, 'r') as fin, open(out_file, 'w') as fout :
+with open(genome_file, 'r') as fin, open(out_file, 'w') as fout:
+    
+    # init chromosome counter
+    n = 0
 
     # iterate over all the lines in the file
     for line in iter(fin.readline, '') :
+
+        # Get the current position in the file handle. This will be the
+        # position of the newline character that terminated the current
+        # line.
+        pos = fin.tell()
 
         # if the line starts with >, then it's a new chromosome
         if line[0] == '>' :
@@ -22,9 +30,15 @@ with open(genome_file, 'r') as fin, open(out_file, 'w') as fout :
             # parse the line and extract the name of the chromosome
             chromosome = line.split(' ')[0][1:]
 
-            # the current position will be the position of the newline after the
-            # name of the chromosome
-            pos = fin.tell()
+            # write a newline if chromosome counter is greater than 0.
+            if n>0 :
+                fout.write("\n")
 
-            # print chromosome name and position
-            fout.write("%s %d\n"%(chromosome, pos))
+            # init the string associated to the new chromosome
+            fout.write("%s:%d"%(chromosome, pos))
+
+            # increment chromosome counter
+            n += 1
+
+        else :
+            fout.write(",%d"%(pos))
