@@ -17,3 +17,10 @@ RUN cd / && \
     cd bwa && \
     make && \
     cp bwa /usr/local/bin
+
+# smmfdp
+RUN cd / && \
+    git clone https://github.com/gui11aume/smmfdp && \
+    cd smmfdp && \
+    make && \
+    cp smmfdp /usr/local/bin
