@@ -6,7 +6,7 @@ EXTRACT_RANDOM_SEQUENCES_LOG = data/3_extract_random_sequences.log
 REMAP_BACK_LOG = data/4_remap_back.log
 
 # analysis parameters
-NSEQ=10000
+NSEQ=50000000
 
 all: run-docker-analysis
 

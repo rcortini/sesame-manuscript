@@ -16,9 +16,13 @@ def log_message (program_name, message) :
 valid_DNA_chars = ('A', 'T', 'G', 'C')
 mutations = {
     'A' : ['C', 'G', 'T'],
+    'a' : ['C', 'G', 'T'],
     'C' : ['G', 'T', 'A'],
+    'c' : ['G', 'T', 'A'],
     'G' : ['T', 'A', 'C'],
-    'T' : ['A', 'C', 'G']
+    'g' : ['T', 'A', 'C'],
+    'T' : ['A', 'C', 'G'],
+    't' : ['A', 'C', 'G'],
 }
 
 def parse_genome_index(index_file) :
@@ -109,7 +113,7 @@ def extract_sequence(fin, flength, L, chromosomes, initial_positions, internal_p
             # and subtract the number of newlines
             start = pos - initial_positions[i] - j
             
-            return pos, chromosomes[i], start, ''.join(seq)
+            return chromosomes[i], start, seq
 
 def extract_random_sequences(genome_file, N, L, mutation_rate, output_file) :
 
@@ -130,7 +134,7 @@ def extract_random_sequences(genome_file, N, L, mutation_rate, output_file) :
 
             # extract a single sequence
             chromosome, start, seq = extract_sequence(fin, flength, L,
-                                                      chromosomes, positions)
+                                    chromosomes, initial_positions, internal_positions)
            
             # prepare the sequence for mutation
             mutated_seq = seq[:]
