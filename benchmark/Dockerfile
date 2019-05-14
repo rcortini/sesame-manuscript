@@ -17,6 +17,3 @@ RUN cd / && \
     cd bwa && \
     make && \
     cp bwa /usr/local/bin
-
-# python packages
-RUN pip3 install biopython
