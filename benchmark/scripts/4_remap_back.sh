@@ -27,10 +27,15 @@ while read line; do
 
   # build input and output file names
   input_file=$genome_file-$N-$L-$mutation_rate.fasta
-  output_file=$genome_file-$N-$L-$mutation_rate.sam
 
-  # extract random sequences according to preferences
+  # BWA remap
   log_message "Remapping $input_file with bwa"
+  output_file=$genome_file-$N-$L-$mutation_rate.bwa.sam
   bwa mem $genome_file $input_file > $output_file
+
+  # smmfdp remap
+  log_message "Remapping $input_file with smmfdp"
+  output_file=$genome_file-$N-$L-$mutation_rate.smmfdp.sam
+  smmfdp mem $genome_file $input_file > $output_file
 
 done < $genomes

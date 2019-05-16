@@ -18,6 +18,10 @@ while read line; do
   log_message "Making BWA index"
   bwa index $genome_file
 
+  # make the smmfdp index
+  log_message "Making smmfdp index"
+  smmfdp index $genome_file
+
   # make my index
   log_message "Making my index"
   python3 scripts/make_my_genome_index.py $genome_file
