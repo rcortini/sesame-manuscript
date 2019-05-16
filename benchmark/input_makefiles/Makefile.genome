@@ -1,0 +1,30 @@
+# variables
+SESAME_BM_ROOT = @SESAME_BM_ROOT@
+GENOME_URL = @GENOME_URL@
+GENOME_FILE = @GENOME_FILE@
+MD5_SUM_URL = @MD5_SUM_URL@
+MAPPERS = @MAPPERS@
+force_look = force_look
+
+all : $(GENOME_FILE) $(MY_GENOME_INDEX) $(MAPPERS) random_sequences
+
+# constants
+SCRIPTS_DIR = $(SESAME_BM_ROOT)/scripts
+DATA_DIR = $(SESAME_BM_ROOT)/data
+DOWNLOAD_GENOME_SCRIPT = $(SCRIPTS_DIR)/1_download_genome.sh
+MAKE_MY_GENOME_INDEX_SCRIPT = $(SCRIPTS_DIR)/make_my_genome_index.py
+
+$(GENOME_FILE) :
+	bash $(DOWNLOAD_GENOME_SCRIPT) $(GENOME_URL) $(MD5_SUM_URL)
+
+$(MY_GENOME_INDEX) : $(GENOME_FILE)
+	python3 $(MAKE_MY_GENOME_INDEX_SCRIPT) $(GENOME_FILE)
+
+random_sequences : $(MY_GENOME_INDEX) $(force_look)
+	$(MAKE) -C $@ $(MAKECMDGOALS)
+
+$(MAPPERS) : $(force_look)
+	$(MAKE) -C $@ $(MAKECMDGOALS)
+
+force_look :
+	@true

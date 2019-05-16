@@ -1,0 +1,8 @@
+# variables
+SESAME_BM_ROOT = @SESAME_BM_ROOT@
+SCRIPTS_DIR = $(SESAME_BM_ROOT)/scripts
+EXTRACT_RANDOM_SEQUENCES = $(SCRIPTS_DIR)/extract_random_sequences.py
+
+all : @ALL_FASTA_FILES@
+
+
