@@ -1,0 +1,2 @@
+bwa	bwa index	bwa mem -t4	ann
+smmfdp	smmfdp index	smmfdp mem	lut

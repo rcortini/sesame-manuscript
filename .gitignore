@@ -1,2 +1,5 @@
 benchmark/data
 !benchmark/data/genomes.txt
+!benchmark/data/mappers.txt
+!benchmark/data/Lvals.txt
+!benchmark/data/pvals.txt
