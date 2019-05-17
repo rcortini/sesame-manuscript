@@ -11,7 +11,7 @@ all : $(GENOME_FILE) $(MY_GENOME_INDEX) $(MAPPERS) random_sequences
 # constants
 SCRIPTS_DIR = $(SESAME_BM_ROOT)/scripts
 DATA_DIR = $(SESAME_BM_ROOT)/data
-DOWNLOAD_GENOME_SCRIPT = $(SCRIPTS_DIR)/1_download_genome.sh
+DOWNLOAD_GENOME_SCRIPT = $(SCRIPTS_DIR)/download_genome.sh
 MAKE_MY_GENOME_INDEX_SCRIPT = $(SCRIPTS_DIR)/make_my_genome_index.py
 
 $(GENOME_FILE) :
