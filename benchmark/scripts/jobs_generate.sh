@@ -13,6 +13,7 @@ pvals="$data_dir/pvals.txt"
 N=50000000
 
 # parse the genomes file
+genomes=""
 while read line; do
 
   # parse the input file
@@ -90,4 +91,14 @@ while read line; do
     sed -e s,@MAPPERS@,"$mappers",g |\
   tee > $makefile_genome_out
 
+  # add this genome to the genome list
+  genomes="$genomes $genome_name"
+
 done < $genomes_fname
+
+# make master Makefile
+makefile_master_in=$input_makefiles_dir/Makefile.master
+makefile_master_out=$data_dir/genomes/Makefile
+cat $makefile_master_in |\
+  sed -e s,@GENOMES@,"$genomes",g |\
+tee > $makefile_master_out

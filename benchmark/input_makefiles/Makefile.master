@@ -1,0 +1,10 @@
+GENOMES = @GENOMES@
+force_look = force_look
+
+all : $(GENOMES)
+
+$(GENOMES) : $(force_look)
+	$(MAKE) -C $@ $(MAKECMDGOALS)
+
+force_look :
+	@true
