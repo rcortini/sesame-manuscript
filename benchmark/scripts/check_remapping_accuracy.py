@@ -21,7 +21,6 @@ out_fname = '%s.accuracy'%(samfile)
 
 with open(samfile, 'r') as fin, open(out_fname, 'w') as fout:
     nseqs = 0
-    nunmapped = 0
     for line in fin :
         
         if line[0] == '@' :
@@ -35,7 +34,6 @@ with open(samfile, 'r') as fin, open(out_fname, 'w') as fout:
         
         # if mapper failed, continue
         if chromosome == '*' :
-            nunmapped += 1
             continue
         
         # now let's check what the mapper says
@@ -46,7 +44,7 @@ with open(samfile, 'r') as fin, open(out_fname, 'w') as fout:
         
         # if mapper failed to identify chromosome...
         if true_chromosome != chromosome :
-            fout.write("* 0\n")
+            fout.write("%d 0\n"%(mapq))
         
         # let's see if it really identified the sequence...
         else :
