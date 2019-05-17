@@ -1,5 +1,6 @@
 # variables
 SESAME_BM_ROOT = @SESAME_BM_ROOT@
+CHECK_REMAP_ACCURACY_SCRIPT = $(SESAME_BM_ROOT)/scripts/check_remapping_accuracy.py
 MAPPER=@MAPPER@
 MAPPER_INDEX_COMMAND=@MAPPER_INDEX_COMMAND@
 MAPPER_MAP_COMMAND=@MAPPER_MAP_COMMAND@
@@ -7,7 +8,17 @@ MAPPER_INDEX=@MAPPER_INDEX@
 GENOME_FILE=../@GENOME_FILE@
 SYMLINK=@GENOME_FILE@
 
-all : $(MAPPER_INDEX)
+# fasta files that need to be converted into sam, then accuracy
+ALL_FASTA_FILES=@ALL_FASTA_FILES@
+ALL_FASTA_NAMES:=$(basename $(ALL_FASTA_FILES))
+ALL_SYMLINKS:=$(addsuffix .fa, $(ALL_FASTA_NAMES))
+ALL_SAM_FILES:=$(addsuffix .sam, $(ALL_FASTA_NAMES))
+ALL_ACCURACY_FILES:=$(addsuffix .sam.accuracy, $(ALL_FASTA_NAMES))
+
+# the names of the files are then prepended with the directory name
+ALL_FASTA_FILES := $(addprefix ../random_sequences/, $(ALL_FASTA_FILES))
+
+all : $(MAPPER_INDEX) $(ALL_SYMLINKS) $(ALL_SAM_FILES) $(ALL_ACCURACY_FILES)
 
 # make a symbolic link to the genome file in the current directory
 $(SYMLINK) : $(GENOME_FILE)
@@ -15,3 +26,12 @@ $(SYMLINK) : $(GENOME_FILE)
 
 $(MAPPER_INDEX) : $(SYMLINK)
 	$(MAPPER_INDEX_COMMAND) $^
+
+%.fa : ../random_sequences/%.fasta
+	ln -s $^ $@
+
+%.sam : %.fa
+	$(MAPPER_MAP_COMMAND) $(SYMLINK) $^ > $@
+
+%.sam.accuracy : %.sam
+	python3 $(CHECK_REMAP_ACCURACY_SCRIPT) $^

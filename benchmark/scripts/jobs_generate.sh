@@ -30,44 +30,6 @@ while read line; do
   genome_dir=$data_dir/genomes/$genome_name
   mkdir -p $genome_dir
 
-  # parse the mappers file
-  old_IFS=$IFS
-  IFS=$'\t'
-  mappers=""
-  while read mapper mapper_index_command mapper_map_command mapper_index_extension; do
-
-    # generate the directory of the mapper
-    mapper_dir=$genome_dir/$mapper
-    mkdir -p $mapper_dir
-
-    # now make the mappers makefiles
-    makefile_mappers_in="$input_makefiles_dir/Makefile.mappers"
-    makefile_mappers_out="$mapper_dir/Makefile"
-    cat $makefile_mappers_in |\
-      sed -e s,@SESAME_BM_ROOT@,$sesame_bm_root,g |\
-      sed -e s,@GENOME_FILE@,$genome_file,g |\
-      sed -e s,@MAPPER@,$mapper,g |\
-      sed -e s,@MAPPER_INDEX_COMMAND@,"$mapper_index_command",g |\
-      sed -e s,@MAPPER_MAP_COMMAND@,"$mapper_map_command",g |\
-      sed -e s,@MAPPER_INDEX@,"$genome_file.$mapper_index_extension",g |\
-    tee > $makefile_mappers_out
-
-    # update the mappers list
-    mappers="$mappers $mapper"
-  done < $mappers_fname
-  IFS=$old_IFS
-
-  # generate genome makefile
-  makefile_genome_in="$input_makefiles_dir/Makefile.genome"
-  makefile_genome_out="$genome_dir/Makefile"
-  cat $makefile_genome_in |\
-    sed -e s,@SESAME_BM_ROOT@,$sesame_bm_root,g |\
-    sed -e s,@GENOME_URL@,$genome_url,g |\
-    sed -e s,@GENOME_FILE@,$genome_file,g |\
-    sed -e s,@MD5_SUM_URL@,$md5sums_url,g |\
-    sed -e s,@MAPPERS@,"$mappers",g |\
-  tee > $makefile_genome_out
-
   # generate the directory of the random sequences
   random_sequences_dir=$genome_dir/random_sequences
   mkdir -p $random_sequences_dir
@@ -88,5 +50,44 @@ while read line; do
   done
   sed -i s,@SESAME_BM_ROOT@,$sesame_bm_root,g $makefile_random_sequences_out
   sed -i s,@ALL_FASTA_FILES@,"$all_fasta_files",g $makefile_random_sequences_out
+
+  # parse the mappers file
+  old_IFS=$IFS
+  IFS=$'\t'
+  mappers=""
+  while read mapper mapper_index_command mapper_map_command mapper_index_extension; do
+
+    # generate the directory of the mapper
+    mapper_dir=$genome_dir/$mapper
+    mkdir -p $mapper_dir
+
+    # now make the mappers makefiles
+    makefile_mappers_in="$input_makefiles_dir/Makefile.mappers"
+    makefile_mappers_out="$mapper_dir/Makefile"
+    cat $makefile_mappers_in |\
+      sed -e s,@SESAME_BM_ROOT@,$sesame_bm_root,g |\
+      sed -e s,@GENOME_FILE@,$genome_file,g |\
+      sed -e s,@MAPPER@,$mapper,g |\
+      sed -e s,@MAPPER_INDEX_COMMAND@,"$mapper_index_command",g |\
+      sed -e s,@MAPPER_MAP_COMMAND@,"$mapper_map_command",g |\
+      sed -e s,@MAPPER_INDEX@,"$genome_file.$mapper_index_extension",g |\
+      sed -e s,@ALL_FASTA_FILES@,"$all_fasta_files",g |\
+    tee > $makefile_mappers_out
+
+    # update the mappers list
+    mappers="$mappers $mapper"
+  done < $mappers_fname
+  IFS=$old_IFS
+
+  # generate genome makefile
+  makefile_genome_in="$input_makefiles_dir/Makefile.genome"
+  makefile_genome_out="$genome_dir/Makefile"
+  cat $makefile_genome_in |\
+    sed -e s,@SESAME_BM_ROOT@,$sesame_bm_root,g |\
+    sed -e s,@GENOME_URL@,$genome_url,g |\
+    sed -e s,@GENOME_FILE@,$genome_file,g |\
+    sed -e s,@MD5_SUM_URL@,$md5sums_url,g |\
+    sed -e s,@MAPPERS@,"$mappers",g |\
+  tee > $makefile_genome_out
 
 done < $genomes_fname

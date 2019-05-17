@@ -23,7 +23,7 @@ $(MY_GENOME_INDEX) : $(GENOME_FILE)
 random_sequences : $(MY_GENOME_INDEX) $(force_look)
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
-$(MAPPERS) : $(force_look)
+$(MAPPERS) : random_sequences $(force_look)
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 force_look :
