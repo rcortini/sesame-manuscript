@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source scripts/0_environment.sh
-
 # check for proper invocation
 if [ $# -ne 2 ]; then
   echo "Usage: 1_download_genome.sh <genome_url> <md5sums_url>"
@@ -32,6 +30,3 @@ fi
 
 # unzip
 gunzip $genome_file
-
-# log
-log_message "Downloaded and extracted $genome_file"
