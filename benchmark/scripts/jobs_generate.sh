@@ -1,5 +1,20 @@
 #!/bin/bash
 
+function generate_mapper_string {
+  genome_name="$1"
+  genome_fasta="$2"
+  read_fasta="$3"
+  sam="$4"
+  mapper_command="$5"
+  # echo $genome_name $genome_fasta $read_fasta $mapper_command
+  echo $mapper_command |\
+    sed -e s,@genomename@,"$genome_name",g |\
+    sed -e s,@genomefasta@,"$genome_fasta",g |\
+    sed -e s,@readfasta@,"$read_fasta",g |\
+    sed -e s,@sam@,"$sam",g |\
+  tee
+}
+
 # get directory names
 sesame_bm_root="$(git rev-parse --show-toplevel)/benchmark"
 data_dir="$sesame_bm_root/data"
@@ -56,11 +71,16 @@ while read line; do
   old_IFS=$IFS
   IFS=$'\t'
   mappers=""
-  while read mapper mapper_index_command mapper_map_command mapper_index_extension; do
+  while read mapper mapper_index mapper_map mapper_idx; do
 
     # generate the directory of the mapper
     mapper_dir=$genome_dir/$mapper
     mkdir -p $mapper_dir
+
+    # generate the strings for the mapper
+    mapper_index_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "\$<" "" "$mapper_index")
+    mapper_map_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "\$<" "\$@" "$mapper_map")
+    mapper_index_name=$(generate_mapper_string $genome_name $genome_file "" "" "$mapper_idx")
 
     # now make the mappers makefiles
     makefile_mappers_in="$input_makefiles_dir/Makefile.mappers"
@@ -71,7 +91,7 @@ while read line; do
       sed -e s,@MAPPER@,$mapper,g |\
       sed -e s,@MAPPER_INDEX_COMMAND@,"$mapper_index_command",g |\
       sed -e s,@MAPPER_MAP_COMMAND@,"$mapper_map_command",g |\
-      sed -e s,@MAPPER_INDEX@,"$genome_file.$mapper_index_extension",g |\
+      sed -e s,@MAPPER_INDEX@,"$mapper_index_name",g |\
       sed -e s,@ALL_FASTA_FILES@,"$all_fasta_files",g |\
     tee > $makefile_mappers_out
 
