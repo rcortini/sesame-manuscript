@@ -2,13 +2,19 @@
 
 sesame_bm_root="$(git rev-parse --show-toplevel)/benchmark"
 data_dir="$sesame_bm_root/data"
-genomes_fname="$data_dir/genomes.txt"
 cluster_dir="$sesame_bm_root/cluster_tools"
-Lvals="$data_dir/Lvals.txt"
-pvals="$data_dir/pvals.txt"
+
+genomes_fname="$data_dir/genomes.txt"
+mappers_fname="$data_dir/mappers.txt"
+Lvals=$(cat "$data_dir/Lvals.txt")
+pvals=$(cat "$data_dir/pvals.txt")
 
 # one constant to bind them all
 N=50000000
+
+# input PBS scripts
+pbs_random_sequences_in="$cluster_dir/randseq.pbs.in"
+pbs_map_in="$cluster_dir/map.pbs.in"
 
 # parse the genomes file
 while read line; do
@@ -29,11 +35,10 @@ while read line; do
   random_sequences_dir=$genome_dir/random_sequences
 
   # generate random sequences cluster scripts
-  pbs_random_sequences_in="$cluster_dir/randseq.pbs.in"
-  for L in $(cat $Lvals); do
-    for p in $(cat $pvals); do 
+  for L in $Lvals; do
+    for p in $pvals; do 
       pbs_random_sequences_out="$random_sequences_dir/randseq-$L-$p.pbs"
-      echo $pbs_random_sequences_out
+      pbs_map_out="$random_sequences_dir/map-$L-$p.pbs"
 
       cat $pbs_random_sequences_in |\
 	sed -e s,@N@,$N,g |\
@@ -43,7 +48,29 @@ while read line; do
 	sed -e s,@OUTFILE@,"$genome_name-$N-$L-$p.fasta",g |\
       tee > $pbs_random_sequences_out
 
+      # parse the mappers file
+      old_IFS=$IFS
+      IFS=$'\t'
+      mappers=""
+      while read mapper mapper_index mapper_map mapper_idx; do
+
+	# generate the directory of the mapper
+	mapper_dir=$genome_dir/$mapper
+
+	pbs_map_out=$mapper_dir/map-$L-$p.pbs
+	cat $pbs_map_in |\
+	  sed -e s,@MAPPER@,$mapper,g |\
+	  sed -e s,@N@,$N,g |\
+	  sed -e s,@L@,$L,g |\
+	  sed -e s,@P@,$p,g |\
+	  sed -e s,@GENOME@,"$genome_name",g |\
+	tee > $pbs_map_out
+
+      done < $mappers_fname
+      IFS=$old_IFS
+
     done
+
   done
 
 done < $genomes_fname
