@@ -53,11 +53,13 @@ def file_length(fin) :
     fin.seek(0, os.SEEK_END)
     return fin.tell()
 
-def extract_sequence(fin, flength, L, chromosomes, initial_positions, internal_positions) :
+def extract_sequence(genome, L, chromosomes, initial_positions, internal_positions) :
     """
-    Extract a single sequence of length `L` from file `fin` (a file handle) that
-    points to a file of length `flength`.
+    Extract a single sequence of length `L` from `genome`
     """
+
+    # get the length of the file
+    flength = len(genome)
     
     # this cycle ends only when we found a valid sequence
     while True :
@@ -66,14 +68,14 @@ def extract_sequence(fin, flength, L, chromosomes, initial_positions, internal_p
         # to a random location in the file, set "seq" list to empty list
         n = 0
         pos = np.random.randint(low=0, high=flength)
-        fin.seek(pos, os.SEEK_SET)
+        i = 0
         seq = []
 
         # read starting from that random location
         while n<L :
 
             # read a single charachter
-            nucleotide = fin.read(1)
+            nucleotide = genome[pos+i]
 
             # if it is not a valid character, interrupt immediately the
             # iteration and go to another location. Otherwise, update seq and n.
@@ -82,7 +84,9 @@ def extract_sequence(fin, flength, L, chromosomes, initial_positions, internal_p
             if nucleotide.upper() in valid_DNA_chars :
                 seq.append(nucleotide)
                 n += 1
+                i += 1
             elif nucleotide == '\n' :
+                i += 1
                 continue
             else :
                 break
@@ -123,17 +127,19 @@ def extract_random_sequences(genome_file, N, L, mutation_rate, output_file) :
         parse_genome_index('%s.myindex'%(genome_file))
 
     # open the genome file
-    with open(genome_file, 'r') as fin, open(output_file, 'w') as fout :
+    log_message("extract_random_sequences", "Reading genome")
+    with open(genome_file, 'r') as fin :
+        genome = fin.read()
 
-        # get the length of the file
-        flength = file_length(fin)
+    # extract the random sequences
+    with open(output_file, 'w') as fout :
 
         # cycle on all the sequences to generate
         log_message("extract_random_sequences", "Start extracting sequences")
         for n in range(N) :
 
             # extract a single sequence
-            chromosome, start, seq = extract_sequence(fin, flength, L,
+            chromosome, start, seq = extract_sequence(genome, L,
                                     chromosomes, initial_positions, internal_positions)
            
             # prepare the sequence for mutation
@@ -175,9 +181,6 @@ if __name__ == '__main__' :
     L = int(sys.argv[3])
     mutation_rate = float(sys.argv[4])
     output_file = sys.argv[5]
-
-    # do the analysis
-    log_message("extract_random_sequences", "Indexing the genome %s"%(genome_file))
 
     # do the analysis
     extract_random_sequences(genome_file, N, L, mutation_rate, output_file)
