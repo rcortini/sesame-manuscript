@@ -44,7 +44,7 @@ while read line; do
 	sed -e s,@N@,$N,g |\
 	sed -e s,@L@,$L,g |\
 	sed -e s,@P@,$p,g |\
-	sed -e s,@GENOME@,$genome_file,g |\
+	sed -e s,@GENOME@,$genome_name,g |\
 	sed -e s,@OUTFILE@,"$genome_name-$N-$L-$p.fasta",g |\
       tee > $pbs_random_sequences_out
 

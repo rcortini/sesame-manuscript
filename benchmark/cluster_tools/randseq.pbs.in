@@ -1,8 +1,8 @@
 #!/bin/bash
-#$ -N rs-@L@-@P@
+#$ -N @GENOME@-@L@-@P@
 #$ -l virtual_free=30G,h_rt=24:00:00
-#$ -e rs-@L@-@P@.err
-#$ -o rs-@L@-@P@.err
+#$ -e randseq-@L@-@P@.err
+#$ -o randseq-@L@-@P@.err
 #$ -q long-sl7
 #$ -cwd
 #$ -P prj005866
@@ -13,7 +13,6 @@ source $HOME/.cluster_env
 # activate python virtual environment
 workon cpython352
 
-sesame_bm_root="$(git rev-parse --show-toplevel)/benchmark"
-python3 $sesame_bm_root/scripts/extract_random_sequences.py @GENOME@ @N@ @L@ @P@ @OUTFILE@
+make @GENOME@-@N@-@L@-@P@.fasta
 
 deactivate
