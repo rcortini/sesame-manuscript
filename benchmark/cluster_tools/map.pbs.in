@@ -7,6 +7,9 @@
 #$ -cwd
 #$ -P prj005866
 
+# export path
+export PATH=$PATH:$HOME/soft/bin
+
 # source cluster environment
 source $HOME/.cluster_env
 
