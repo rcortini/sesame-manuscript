@@ -67,7 +67,7 @@ def extract_sequence(genome, L, chromosomes, initial_positions, internal_positio
         # initiate the search: set number of found nucleotides "n" to zero, jump
         # to a random location in the file, set "seq" list to empty list
         n = 0
-        pos = np.random.randint(low=0, high=flength)
+        pos = np.random.randint(low=0, high=flength-L)
         i = 0
         seq = []
 
@@ -75,7 +75,11 @@ def extract_sequence(genome, L, chromosomes, initial_positions, internal_positio
         while n<L :
 
             # read a single charachter
-            nucleotide = genome[pos+i]
+            try :
+                nucleotide = genome[pos+i]
+            except IndexError :
+                print(pos, i)
+                break
 
             # if it is not a valid character, interrupt immediately the
             # iteration and go to another location. Otherwise, update seq and n.
