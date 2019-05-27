@@ -19,10 +19,11 @@ function generate_mapper_string {
 sesame_bm_root="$(git rev-parse --show-toplevel)/benchmark"
 data_dir="$sesame_bm_root/data"
 input_makefiles_dir="$sesame_bm_root/input_makefiles"
-genomes_fname="$data_dir/genomes.txt"
-mappers_fname="$data_dir/mappers.txt"
-Lvals="$data_dir/Lvals.txt"
-pvals="$data_dir/pvals.txt"
+input_conf_dir="$sesame_bm_root/input_conf"
+genomes_fname="$input_conf_dir/genomes.txt"
+mappers_fname="$input_conf_dir/mappers.txt"
+Lvals="$input_conf_dir/Lvals.txt"
+pvals="$input_conf_dir/pvals.txt"
 
 # one constant to bind them all
 N=50000000
