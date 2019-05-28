@@ -33,3 +33,16 @@ $(MAPPER_INDEX) : $(SYMLINK)
 
 %.sam.accuracy : %.sam
 	python3 $(CHECK_REMAP_ACCURACY_SCRIPT) $^
+
+.PHONY : clean cleansam cleanaccuracy cleansymlinks
+
+clean : cleansam cleanaccuracy cleansymlinks
+
+cleansam :
+	rm -f $(ALL_SAM_FILES)
+
+cleanaccuracy :
+	rm -f $(ALL_ACCURACY_FILES)
+
+cleansymlinks :
+	rm -f $(ALL_SYMLINKS) $(SYMLINK)
