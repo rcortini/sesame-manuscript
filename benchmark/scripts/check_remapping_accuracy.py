@@ -7,44 +7,40 @@ def parse_smmfdp_output(samfile, out_fname, nucleotide_tolerance = 10) :
         
         for line in fin :
         
-            if line[0] == '>' :
-                seq_name = line[1:].split('\t')[0]
-                # parse the seq_name
-                true_chromosome, true_start, true_end  = seq_name.split(';')
-            else :
-                # parse the line
-                try :
-                    seq, temp, mapq = line.strip('\n').split()
-                except ValueError :
-                    print(line)
-                    continue
-                
-                # if mapper failed, continue
-                if temp == 'NA' :
-                    continue
-                
-                # otherwise, parse the `temp`
+            # parse the line
+            try :
+                seq_name, seq, temp, mapq = line.strip('\n').split('\t')
+            except ValueError :
+                print(line)
+                continue
+            
+            # parse the seq_name
+            true_chromosome, true_start, true_end  = seq_name.split(';')
+            
+            # otherwise, parse the `temp`
+            if temp != 'NA' :
                 chromosome, start, strand = temp.split(':')
-                if float(mapq) <= 0.0 :
-                    continue
-                else :
-                    try :
-                        mapq = int(-10*np.log10(float(mapq)))
-                    except ValueError :
-                        continue
-                
-                # now let's check what the mapper says
+            else :
+                continue
 
-                # if mapper failed to identify chromosome...
-                if true_chromosome != chromosome :
+            try :
+                mapq = int(-10*np.log10(float(mapq)))
+            except OverflowError :
+                print(line)
+                break
+            
+            # now let's check what the mapper says
+
+            # if mapper failed to identify chromosome...
+            if true_chromosome != chromosome :
+                fout.write("%d 0\n"%(mapq))
+
+            # let's see if it really identified the sequence...
+            else :
+                if np.abs(int(true_start) - int(start)) < nucleotide_tolerance :
+                    fout.write("%d 1\n"%(mapq))
+                else :
                     fout.write("%d 0\n"%(mapq))
-
-                # let's see if it really identified the sequence...
-                else :
-                    if np.abs(int(true_start) - int(start)) < nucleotide_tolerance :
-                        fout.write("%d 1\n"%(mapq))
-                    else :
-                        fout.write("%d 0\n"%(mapq))
 
 def parse_samfile(samfile, out_fname, nucleotide_tolerance = 10) :
     with open(samfile, 'r') as fin, open(out_fname, 'w') as fout:
@@ -97,10 +93,11 @@ if not os.path.exists(samfile) :
 # init variables for analysis
 out_fname = '%s.accuracy'%(samfile)
 
+# check if we're parsing a true SAM file
 is_true_samfile = True
 with open(samfile, 'r') as fin :
     line = fin.readline()
-    if line[0] == '>' :
+    if line[0] != '@' :
         is_true_samfile = False
 
 if not is_true_samfile :
