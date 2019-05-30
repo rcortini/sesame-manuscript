@@ -42,6 +42,7 @@ while read line; do
   genome_file=${genome_file%%.gz}
   genome_name=${genome_file%%.fasta}
   genome_name=${genome_name%%.fna}
+  genome_name=${genome_name%%.fa}
 
   # generate the directory of the genome
   genome_dir=$data_dir/genomes/$genome_name
