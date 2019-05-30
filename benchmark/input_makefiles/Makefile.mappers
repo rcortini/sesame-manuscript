@@ -43,15 +43,18 @@ $(MAPPER_INDEX) : $(SYMLINK)
 %.sam.amq : %.sam.accuracy
 	python3 $(AVERAGE_MAPPING_QUALITY_SCRIPT) $^
 
-.PHONY : clean cleansam cleanaccuracy cleansymlinks
+.PHONY : clean cleansam cleanaccuracy cleansymlinks cleanamq
 
-clean : cleansam cleanaccuracy cleansymlinks
+clean : cleansam cleanaccuracy cleansymlinks cleanamq
 
 cleansam :
 	rm -f $(ALL_SAM_FILES)
 
 cleanaccuracy :
 	rm -f $(ALL_ACCURACY_FILES)
+
+cleanamq :
+	rm -f $(ALL_AMQ_FILES)
 
 cleansymlinks :
 	rm -f $(ALL_SYMLINKS) $(SYMLINK)
