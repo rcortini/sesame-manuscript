@@ -6,6 +6,8 @@ MD5_SUM_URL = @MD5_SUM_URL@
 MAPPERS = @MAPPERS@
 force_look = force_look
 
+MY_GENOME_INDEX = $(GENOME_FILE).myindex
+
 all : $(GENOME_FILE) $(MY_GENOME_INDEX) $(MAPPERS) random_sequences
 
 # constants
