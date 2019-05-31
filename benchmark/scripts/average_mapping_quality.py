@@ -1,42 +1,33 @@
 import numpy as np
 import sys, os
 
-def average_mapping_quality(accuracy_fname, bin_min, bin_max, bin_step) :
-    
-    # generate bins
-    bins = np.arange(bin_min, bin_max+bin_step, bin_step)
-    
-    # initialize the array
-    qvals_binned = np.zeros(len(bins)-1, dtype=np.float32)
-    mapq_binned = np.zeros(len(bins)-1, dtype=np.float32)
-    
-    with open(accuracy_fname, 'r') as fin :
-        
-        nunmapped = 0
-        
-        # parse the file line by line
-        for lineno, line in enumerate(fin) :
-            
-            # get the values of mapping quality and truth
-            mapq, is_true = line.strip('\n').split()
-                          
-            # get the index of the map_q_binned that we need to increment
-            i = (int(mapq)-bin_min)//bin_step
-            try :
-                qvals_binned[i] += 1
-            except IndexError :
-                print(line)
-                print(bins)
-                print(i)
-                break
-            if int(is_true) == 1 :
-                mapq_binned[i] += 1
-                
+def average_mapping_quality(accuracy_fname) :
+
+    # load the file
+    x = np.loadtxt(accuracy_fname)
+
+    # initialize the arrays
+    qvals = np.unique(x[:,0])
+    mapq = np.zeros(len(qvals))
+    qvals_counts = np.zeros(len(qvals))
+
+    # parse the file line by line
+    for q, is_true in x :
+
+        # get the index of the map_q_binned that we need to increment
+        i = np.where(qvals == q)[0][0]
+        qvals_counts[i] += 1
+        if int(is_true) == 1 :
+            mapq[i] += 1
+
     # once we finished parsing the file, we get the values of q, and
     # define our output array
-    mapq_binned /= qvals_binned
-    
-    return -10 * np.log10(1-mapq_binned)
+    mapq /= qvals_counts
+
+    # calculate the average mapping quality
+    amq = -10 * np.log10(1-mapq)
+
+    return np.column_stack((qvals, amq))
 
 # check for proper invocation
 if len(sys.argv) < 2 :
@@ -47,7 +38,7 @@ if len(sys.argv) < 2 :
 accuracy_fname = sys.argv[1]
 
 # launch the calculation
-amq = average_mapping_quality(accuracy_fname, 0, 65, 5)
+amq = average_mapping_quality(accuracy_fname)
 
 # build output file name
 amq_fname = accuracy_fname.strip('.accuracy') + '.amq'
