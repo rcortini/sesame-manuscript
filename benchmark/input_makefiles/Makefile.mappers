@@ -34,9 +34,7 @@ $(MAPPER_INDEX) : $(SYMLINK)
 %.fa : ../random_sequences/%.fasta
 	ln -s $^ $@
 
-%.sam : %.fa
-	@MAPPER_MAP_COMMAND@
-
+@MAPPER_MAP_COMMANDS@
 %.sam.accuracy : %.sam
 	python3 $(CHECK_REMAP_ACCURACY_SCRIPT) $^
 

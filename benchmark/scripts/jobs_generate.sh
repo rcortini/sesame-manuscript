@@ -6,12 +6,14 @@ function generate_mapper_string {
   read_fasta="$3"
   sam="$4"
   mapper_command="$5"
+  p="$6"
   # echo $genome_name $genome_fasta $read_fasta $mapper_command
   echo $mapper_command |\
     sed -e s,@genomename@,"$genome_name",g |\
     sed -e s,@genomefasta@,"$genome_fasta",g |\
     sed -e s,@readfasta@,"$read_fasta",g |\
     sed -e s,@sam@,"$sam",g |\
+    sed -e s,@p@,"$p",g |\
   tee
 }
 
@@ -57,13 +59,18 @@ while read line; do
   makefile_random_sequences_out="$random_sequences_dir/Makefile"
   all_fasta_files=""
   cat $makefile_random_sequences_in > $makefile_random_sequences_out
+  declare -a seqs
+  let i=0
   for L in $(cat $Lvals); do
     for p in $(cat $pvals); do 
-      fasta_file="$genome_name-$N-$L-$p.fasta"
+      seq="$genome_name-$N-$L-$p"
+      fasta_file="$seq.fasta"
       all_fasta_files="$all_fasta_files $fasta_file"
       echo "" >> $makefile_random_sequences_out
       echo "$fasta_file : ../$genome_file" >> $makefile_random_sequences_out
       echo -e "\tpython3 \$(EXTRACT_RANDOM_SEQUENCES) \$^ $N $L $p \$@" >> $makefile_random_sequences_out
+      seqs[i]="$seq"
+      let i=i+1
     done
   done
   sed -i s,@SESAME_BM_ROOT@,$sesame_bm_root,g $makefile_random_sequences_out
@@ -81,8 +88,20 @@ while read line; do
 
     # generate the strings for the mapper
     mapper_index_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "\$<" "" "$mapper_index")
-    mapper_map_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "\$<" "\$@" "$mapper_map")
     mapper_index_name=$(generate_mapper_string $genome_name $genome_file "" "" "$mapper_idx")
+
+    # generate mapper map commands
+    rm -f temp
+    for seq in "${seqs[@]}"; do
+      fa_file="$seq.fa"
+      sam_file="$seq.sam"
+      p=$(echo $seq | rev | cut -d '-' -f1 | rev)
+      mapper_map_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "\$<" "\$@" "$mapper_map" "$p")
+      echo "$sam_file : $fa_file" >> temp
+      echo -e "\t$mapper_map_command" >> temp
+      echo "" >> temp
+    done
+    rm -f temp
 
     # now make the mappers makefiles
     makefile_mappers_in="$input_makefiles_dir/Makefile.mappers"
@@ -92,7 +111,7 @@ while read line; do
       sed -e s,@GENOME_FILE@,$genome_file,g |\
       sed -e s,@MAPPER@,$mapper,g |\
       sed -e s,@MAPPER_INDEX_COMMAND@,"$mapper_index_command",g |\
-      sed -e s,@MAPPER_MAP_COMMAND@,"$mapper_map_command",g |\
+      sed -e '/@MAPPER_MAP_COMMANDS@/{r temp' -e 'd}' |\
       sed -e s,@MAPPER_INDEX@,"$mapper_index_name",g |\
       sed -e s,@ALL_FASTA_FILES@,"$all_fasta_files",g |\
     tee > $makefile_mappers_out
