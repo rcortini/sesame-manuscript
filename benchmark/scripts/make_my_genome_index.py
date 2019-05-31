@@ -28,7 +28,7 @@ with open(genome_file, 'r') as fin, open(out_file, 'w') as fout:
         if line[0] == '>' :
 
             # parse the line and extract the name of the chromosome
-            chromosome = line.split(' ')[0][1:]
+            chromosome = line.strip('\n').split(' ')[0][1:]
 
             # write a newline if chromosome counter is greater than 0.
             if n>0 :
