@@ -3,7 +3,7 @@ SESAME_BM_ROOT = @SESAME_BM_ROOT@
 CHECK_REMAP_ACCURACY_SCRIPT = $(SESAME_BM_ROOT)/scripts/check_remapping_accuracy.py
 AVERAGE_MAPPING_QUALITY_SCRIPT = $(SESAME_BM_ROOT)/scripts/average_mapping_quality.py
 MAPPER=@MAPPER@
-MAPPER_INDEX=@MAPPER_INDEX@
+MAPPER_INDEX=@GENOME_FILE@.@MAPPER@.index_done
 GENOME_FILE=../@GENOME_FILE@
 SYMLINK=@GENOME_FILE@
 
@@ -29,7 +29,7 @@ $(SYMLINK) : $(GENOME_FILE)
 	ln -s $^ $@
 
 $(MAPPER_INDEX) : $(SYMLINK)
-	@MAPPER_INDEX_COMMAND@
+	@MAPPER_INDEX_COMMAND@ > $@
 
 %.fa : ../random_sequences/%.fasta
 	ln -s $^ $@

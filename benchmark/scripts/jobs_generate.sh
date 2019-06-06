@@ -88,7 +88,6 @@ while read line; do
 
     # generate the strings for the mapper
     mapper_index_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "\$<" "" "$mapper_index")
-    mapper_index_name=$(generate_mapper_string $genome_name $genome_file "" "" "$mapper_idx")
 
     # generate mapper map commands
     rm -f temp
@@ -111,7 +110,6 @@ while read line; do
       sed -e s,@MAPPER@,$mapper,g |\
       sed -e s,@MAPPER_INDEX_COMMAND@,"$mapper_index_command",g |\
       sed -e '/@MAPPER_MAP_COMMANDS@/{r temp' -e 'd}' |\
-      sed -e s,@MAPPER_INDEX@,"$mapper_index_name",g |\
       sed -e s,@ALL_FASTA_FILES@,"$all_fasta_files",g |\
     tee > $makefile_mappers_out
     rm -f temp
