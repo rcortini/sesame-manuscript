@@ -97,11 +97,10 @@ while read line; do
       sam_file="$seq.sam"
       p=$(echo $seq | rev | cut -d '-' -f1 | rev)
       mapper_map_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "\$<" "\$@" "$mapper_map" "$p")
-      echo "$sam_file : $fa_file" >> temp
+      echo "$sam_file : $fa_file \$(MAPPER_INDEX)" >> temp
       echo -e "\t$mapper_map_command" >> temp
       echo "" >> temp
     done
-    rm -f temp
 
     # now make the mappers makefiles
     makefile_mappers_in="$input_makefiles_dir/Makefile.mappers"
@@ -115,6 +114,7 @@ while read line; do
       sed -e s,@MAPPER_INDEX@,"$mapper_index_name",g |\
       sed -e s,@ALL_FASTA_FILES@,"$all_fasta_files",g |\
     tee > $makefile_mappers_out
+    rm -f temp
 
     # update the mappers list
     mappers="$mappers $mapper"
