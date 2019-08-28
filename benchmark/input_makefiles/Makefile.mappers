@@ -18,11 +18,17 @@ ALL_AMQ_FILES:=$(addsuffix .sam.amq, $(ALL_FASTA_NAMES))
 # the names of the files are then prepended with the directory name
 ALL_FASTA_FILES := $(addprefix ../random_sequences/, $(ALL_FASTA_FILES))
 
+# memory benchmark stuff
+TEST_FASTA=test.fasta
+MEMTEST=$(SESAME_BM_ROOT)/scripts/memtest.sh
+MEMBENCHMARK=membenchmark.dat
+
 all : $(MAPPER_INDEX)\
       $(ALL_SYMLINKS)\
       $(ALL_SAM_FILES)\
       $(ALL_ACCURACY_FILES)\
-      $(ALL_AMQ_FILES)
+      $(ALL_AMQ_FILES)\
+      $(MEMBENCHMARK)
 
 # make a symbolic link to the genome file in the current directory
 $(SYMLINK) : $(GENOME_FILE)
@@ -41,9 +47,15 @@ $(MAPPER_INDEX) : $(SYMLINK)
 %.sam.amq : %.sam.accuracy
 	python3 $(AVERAGE_MAPPING_QUALITY_SCRIPT) $^
 
+$(TEST_FASTA) : $(word 1, $(ALL_FASTA_FILES))
+	head -n 1000000 $< > $@
+
+$(MEMBENCHMARK) : $(GENOME_FILE) $(TEST_FASTA)
+	bash $(MEMTEST) $(MEMBENCHMARK) @TEST_MAP_COMMAND@
+
 .PHONY : clean cleansam cleanaccuracy cleansymlinks cleanamq
 
-clean : cleansam cleanaccuracy cleansymlinks cleanamq
+clean : cleansam cleanaccuracy cleansymlinks cleanamq cleanmembenchmark
 
 cleansam :
 	rm -f $(ALL_SAM_FILES)
@@ -56,3 +68,6 @@ cleanamq :
 
 cleansymlinks :
 	rm -f $(ALL_SYMLINKS) $(SYMLINK)
+
+cleanmembenchmark :
+	rm -rf $(MEMBENCHMARK)
