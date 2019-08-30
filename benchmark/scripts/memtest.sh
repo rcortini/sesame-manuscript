@@ -1,5 +1,11 @@
 #!/bin/bash
 
+exit_script() {
+    echo "Signal caught"
+    trap - SIGINT SIGTERM # clear the trap
+    kill -- -$$ # Sends SIGTERM to child/sub processes
+}
+
 function checkmemory {
 
   if [ $# -ne 2 ]; then
@@ -31,7 +37,9 @@ function checkmemory {
       fp=$(ps -o rss $pid | tail -n 1)
 
       # the process might have stopped in the meanwhile
-      if [ "$fp" -e "RSS" ] then return fi
+      if [ "$fp" == "RSS" ]; then
+	fp=0
+      fi
 
       let memfootprint=fp+memfootprint
     done
@@ -44,11 +52,18 @@ function checkmemory {
   done
 }
 
+do_map() {
+  the_command=$1
+  echo "MEMTEST executing: $the_command"
+  $the_command
+}
+
+trap exit_script SIGINT SIGTERM
+
 # invoke the command
 outfile=$1
 mycommand="${@:2}"
-echo "MEMTEST executing: $mycommand"
-$mycommand &
+do_map "$mycommand" &
 mypid=$!
 
 # check memory
