@@ -30,5 +30,4 @@ membenchmark_dir="$data_dir/membenchmark"
 
 # one constant to bind them all
 N=50000000
-
-
+N_MEMBENCHMARK=1000000

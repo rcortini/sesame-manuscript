@@ -2,6 +2,7 @@
 SESAME_BM_ROOT = @SESAME_BM_ROOT@
 CHECK_REMAP_ACCURACY_SCRIPT = $(SESAME_BM_ROOT)/scripts/check_remapping_accuracy.py
 AVERAGE_MAPPING_QUALITY_SCRIPT = $(SESAME_BM_ROOT)/scripts/average_mapping_quality.py
+MEMTEST=$(SESAME_BM_ROOT)/scripts/memtest.sh
 MAPPER=@MAPPER@
 MAPPER_INDEX=@GENOME_FILE@.@MAPPER@.index_done
 GENOME_FILE=../@GENOME_FILE@
@@ -14,21 +15,17 @@ ALL_SYMLINKS:=$(addsuffix .fa, $(ALL_FASTA_NAMES))
 ALL_SAM_FILES:=$(addsuffix .sam, $(ALL_FASTA_NAMES))
 ALL_ACCURACY_FILES:=$(addsuffix .sam.accuracy, $(ALL_FASTA_NAMES))
 ALL_AMQ_FILES:=$(addsuffix .sam.amq, $(ALL_FASTA_NAMES))
+ALL_MEMBENCHMARK_FILES:=$(addsuffix .membenchmark, $(ALL_FASTA_NAMES))
 
 # the names of the files are then prepended with the directory name
 ALL_FASTA_FILES := $(addprefix ../random_sequences/, $(ALL_FASTA_FILES))
-
-# memory benchmark stuff
-TEST_FASTA=test.fasta
-MEMTEST=$(SESAME_BM_ROOT)/scripts/memtest.sh
-MEMBENCHMARK=membenchmark.dat
 
 all : $(MAPPER_INDEX)\
       $(ALL_SYMLINKS)\
       $(ALL_SAM_FILES)\
       $(ALL_ACCURACY_FILES)\
       $(ALL_AMQ_FILES)\
-      $(MEMBENCHMARK)
+      $(ALL_MEMBENCHMARK_FILES)\
 
 # make a symbolic link to the genome file in the current directory
 $(SYMLINK) : $(GENOME_FILE)
@@ -41,17 +38,12 @@ $(MAPPER_INDEX) : $(SYMLINK)
 	ln -s $^ $@
 
 @MAPPER_MAP_COMMANDS@
+
 %.sam.accuracy : %.sam
 	python3 $(CHECK_REMAP_ACCURACY_SCRIPT) $^
 
 %.sam.amq : %.sam.accuracy
 	python3 $(AVERAGE_MAPPING_QUALITY_SCRIPT) $^
-
-$(TEST_FASTA) : $(word 1, $(ALL_FASTA_FILES))
-	head -n 1000000 $< > $@
-
-$(MEMBENCHMARK) : $(GENOME_FILE) $(TEST_FASTA)
-	bash $(MEMTEST) $(MEMBENCHMARK) @TEST_MAP_COMMAND@
 
 .PHONY : clean cleansam cleanaccuracy cleansymlinks cleanamq
 
@@ -70,4 +62,4 @@ cleansymlinks :
 	rm -f $(ALL_SYMLINKS) $(SYMLINK)
 
 cleanmembenchmark :
-	rm -rf $(MEMBENCHMARK)
+	rm -rf $(ALL_MEMBENCHMARK_FILES)

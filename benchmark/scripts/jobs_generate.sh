@@ -66,17 +66,22 @@ while read line; do
     for seq in "${seqs[@]}"; do
       fa_file="$seq.fa"
       sam_file="$seq.sam"
+      membenchmark_file="$seq.membenchmark"
       p=$(echo $seq | rev | cut -d '-' -f1 | rev)
-      mapper_map_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "\$<" "\$@" "$mapper_map" "$p")
+      mapper_map_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "$fa_file" "$sam_file" "$mapper_map" "$p")
       echo "$sam_file : $fa_file \$(MAPPER_INDEX)" >> temp
       echo -e "\t$mapper_map_command" >> temp
       echo "" >> temp
-    done
 
-    # prepare variables for membenchmark
-    test_fasta="test.fasta"
-    test_sam="test.sam"
-    test_map_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" $test_fasta $test_sam "$mapper_map" "$p")
+      mini_fa_file="$seq-mini.fa"
+      mini_sam_file="$seq-mini.sam"
+      mapper_membenchmark_command=$(generate_mapper_string $genome_name "\$(SYMLINK)" "$mini_fa_file" "$mini_sam_file" "$mapper_map" "$p")
+      echo "$membenchmark_file : $fa_file \$(MAPPER_INDEX)" >> temp
+      echo -e "\thead -n $N_MEMBENCHMARK $fa_file > $mini_fa_file" >> temp
+      echo -e "\tbash \$(MEMTEST) \$@ $mapper_membenchmark_command" >> temp
+      echo -e "\trm -rf $mini_fa_file $mini_sam_file" >> temp
+      echo "" >> temp
+    done
 
     # now make the mappers makefiles
     makefile_mappers_in="$input_makefiles_dir/Makefile.mappers"
@@ -88,7 +93,6 @@ while read line; do
       sed -e s,@MAPPER@,$mapper,g |\
       sed -e s,@MAPPER_INDEX_COMMAND@,"$mapper_index_command",g |\
       sed -e '/@MAPPER_MAP_COMMANDS@/{r temp' -e 'd}' |\
-      sed -e s/@TEST_MAP_COMMAND@/$test_map_command/g |\
       sed -e s,@ALL_FASTA_FILES@,"$all_fasta_files",g |\
     tee > $makefile_mappers_out
     rm -f temp

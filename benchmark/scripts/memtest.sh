@@ -54,7 +54,6 @@ function checkmemory {
 
 do_map() {
   the_command=$1
-  echo "MEMTEST executing: $the_command"
   $the_command
 }
 
