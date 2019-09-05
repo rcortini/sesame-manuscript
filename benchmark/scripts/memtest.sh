@@ -53,8 +53,13 @@ function checkmemory {
 }
 
 do_map() {
-  the_command=$1
-  $the_command
+  outfile=$1
+  the_command=$2
+  $the_command &
+  mypid=$!
+
+  # check memory
+  checkmemory $mypid $outfile
 }
 
 trap exit_script SIGINT SIGTERM
@@ -62,8 +67,4 @@ trap exit_script SIGINT SIGTERM
 # invoke the command
 outfile=$1
 mycommand="${@:2}"
-do_map "$mycommand" &
-mypid=$!
-
-# check memory
-checkmemory $mypid $outfile
+do_map $outfile "$mycommand"
