@@ -27,7 +27,7 @@ def average_mapping_quality(accuracy_fname) :
     # calculate the average mapping quality
     amq = -10 * np.log10(1-mapq)
 
-    return np.column_stack((qvals, amq))
+    return np.column_stack((qvals, qvals_counts, amq))
 
 # check for proper invocation
 if len(sys.argv) < 2 :
