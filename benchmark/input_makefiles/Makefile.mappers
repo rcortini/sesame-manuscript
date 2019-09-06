@@ -2,6 +2,7 @@
 SESAME_BM_ROOT = @SESAME_BM_ROOT@
 CHECK_REMAP_ACCURACY_SCRIPT = $(SESAME_BM_ROOT)/scripts/check_remapping_accuracy.py
 AVERAGE_MAPPING_QUALITY_SCRIPT = $(SESAME_BM_ROOT)/scripts/average_mapping_quality.py
+ROC_SCRIPT = $(SESAME_BM_ROOT)/scripts/roc.py
 MEMTEST=$(SESAME_BM_ROOT)/scripts/memtest.sh
 MAPPER=@MAPPER@
 MAPPER_INDEX=@GENOME_FILE@.@MAPPER@.index_done
@@ -18,6 +19,7 @@ ALL_ACCURACY_FILES:=$(addsuffix .sam.accuracy, $(ALL_FASTA_NAMES))
 ALL_AMQ_FILES:=$(addsuffix .sam.amq, $(ALL_FASTA_NAMES))
 ALL_MEMBENCHMARK_FILES:=$(addsuffix .membenchmark, $(ALL_FASTA_NAMES))
 ALL_MBA_FILES:=$(addsuffix .mba, $(ALL_FASTA_NAMES))
+ALL_ROC_FILES:=$(addsuffix .sam.roc, $(ALL_FASTA_NAMES))
 
 # the names of the files are then prepended with the directory name
 ALL_FASTA_FILES := $(addprefix ../random_sequences/, $(ALL_FASTA_FILES))
@@ -29,6 +31,7 @@ all : $(MAPPER_INDEX)\
       $(ALL_AMQ_FILES)\
       $(ALL_MEMBENCHMARK_FILES)\
       $(ALL_MBA_FILES)\
+      $(ALL_ROC_FILES)\
 
 # make a symbolic link to the genome file in the current directory
 $(SYMLINK) : $(GENOME_FILE)
@@ -48,13 +51,16 @@ $(MAPPER_INDEX) : $(SYMLINK)
 %.sam.amq : %.sam.accuracy
 	python3 $(AVERAGE_MAPPING_QUALITY_SCRIPT) $^
 
+%.sam.roc : %.sam.accuracy
+	python3 $(ROC_SCRIPT) $^
+
 %.mba : %.sam.accuracy
 	head -n $(N_MEMBENCHMARK) $< | awk 'BEGIN {sum=0} ; {sum+=$$2} END {print sum}' > $@
 
 
-.PHONY : clean cleansam cleanaccuracy cleansymlinks cleanamq
+.PHONY : clean cleansam cleanaccuracy cleansymlinks cleanamq cleanroc
 
-clean : cleansam cleanaccuracy cleansymlinks cleanamq cleanmembenchmark cleanmba
+clean : cleansam cleanaccuracy cleansymlinks cleanamq cleanmembenchmark cleanmba cleanroc
 
 cleansam :
 	rm -f $(ALL_SAM_FILES)
@@ -64,6 +70,9 @@ cleanaccuracy :
 
 cleanamq :
 	rm -f $(ALL_AMQ_FILES)
+
+cleanroc :
+	rm -f $(ALL_ROC_FILES)
 
 cleansymlinks :
 	rm -f $(ALL_SYMLINKS) $(SYMLINK)
