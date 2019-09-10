@@ -71,8 +71,8 @@ def seq_membenchmark(genome, mapper, N, L, p, sesame_bm_root = sesame_bm_root) :
 
 def seq_mba(genome, mapper, N, L, p, sesame_bm_root = sesame_bm_root) :
     seq = seq_root(genome, N, L, p)
-    md = mapper_dir(genome, mapper, sesame_bm_root = sesame_bm_root)
-    return '%s/%s/%s.mba'%(gd, mapper, seq)
+    gd = mapper_dir(genome, mapper, sesame_bm_root = sesame_bm_root)
+    return '%s/%s.mba'%(gd, seq)
 
 # aliases of the genomes, so to make plots human-readable
 genome_aliases = {'GCA_000404065.3_Ptaeda2.0_genomic' : 'Pine',

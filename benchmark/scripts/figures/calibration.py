@@ -3,7 +3,6 @@ from figure_settings import *
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
-from matplotlib.ticker import NullFormatter, LogFormatterMathtext
 import sys, os
 
 # use my custom style for the plots
