@@ -3,3 +3,4 @@ benchmark/data
 !benchmark/data/mappers.txt
 !benchmark/data/Lvals.txt
 !benchmark/data/pvals.txt
+*__pycache__
