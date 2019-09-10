@@ -10,17 +10,18 @@ def roc_curve(accuracy_fname) :
     n = len(accuracy)
     
     # define the values of the thresholds to study
-    thresholds = np.unique(accuracy[:,0])
+    thresholds = np.unique(accuracy[:,0])[::-1]
     T = len(thresholds)
     
     # initialize
-    R = np.zeros((T,2))
+    R = np.zeros((T,3))
     
     # calculate the ROC curve
     for i, threshold in enumerate(thresholds) :
         myreads = accuracy[accuracy[:,0] >= threshold, 1]
-        R[i,0] = (myreads==0).sum()/n
-        R[i,1] = (myreads==1).sum()/n
+        R[i,0] = (myreads==0).sum()
+        R[i,1] = (myreads==1).sum()
+        R[i,2] = threshold
     return R
 
 # check for proper invocation
