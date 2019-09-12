@@ -12,6 +12,7 @@ run-docker-analysis:
 	docker run -v $(CURDIR):/benchmark $(DOCKER_NAME) make -C /benchmark benchmark
 
 benchmark :
-	bash scripts/jobs_generate.sh; \
-	  cd data/genomes; \
+	cd scripts; \
+	bash jobs_generate.sh; \
+	  cd ../data/genomes; \
 	  make -n

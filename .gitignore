@@ -6,3 +6,4 @@ benchmark/data
 !benchmark/data/Lvals.txt
 !benchmark/data/pvals.txt
 *__pycache__
+*.pyc
