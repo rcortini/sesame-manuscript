@@ -7,6 +7,7 @@ RUN apt-get update -qq &&   \
             git             \
             zlib1g-dev      \
             wget            \
+            python          \
             python3         \
             python3-pip     \
 	    make
@@ -30,3 +31,6 @@ RUN apt-get install unzip && \
     wget https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.5.1/bowtie2-2.3.5.1-sra-linux-x86_64.zip && \
     unzip bowtie2-2.3.5.1-sra-linux-x86_64.zip && \
     cp bowtie2-2.3.5.1-sra-linux-x86_64/bowtie2* /usr/local/bin
+
+# install Python modules
+RUN pip3 install numpy
