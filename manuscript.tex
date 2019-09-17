@@ -11,11 +11,11 @@
 
 \begin{document}
 
-\title{Faithful short read mapping with Sesame}
+\title{Faithful short-read mapping with Sesame}
 
 \author{%
-Ruggero Cortini\,$^{1}$,
-Eduard Valera Zorita\,$^{1}$,
+Ruggero Cortini\,$^{1,\text{\#}}$,
+Eduard Valera Zorita\,$^{1,\text{\#}}$,
 Guillaume J. Filion\,$^{1,2,3}$
 \footnote{To whom correspondence should be addressed.
 Email: guillaume.filion@gmail.com}}
@@ -25,7 +25,8 @@ $^{1}$Center for Genomic Regulation (CRG), The Barcelona Institute
 of Science and Technology, Dr. Aiguader 88, Barcelona 08003, Spain;
 $^{2}$University Pompeu Fabra (UPF), Barcelona, Spain;
 $^{3}$present address: Department of Biological Sciences, University
-of Toronto Scarborough, Toronto, ON, Canada.}
+of Toronto Scarborough, Toronto, ON, Canada; $^{\text{\#}}$ equal
+contributions.}
 % Affiliation must include:
 % Department name, institution name, full road and district address,
 % state, Zip or postal code, country
@@ -67,25 +68,58 @@ Text. Text.
 
 \section{Introduction}
 
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text.
-Text \cite{1}.
+High throughput DNA sequencing is now a standard technology in the
+academia and in the industry, with countless applications in diagnosis,
+forensics, surveillance and research \cite{1}. The Illumina short-read
+technology currently dominates the market of DNA sequencing, making the
+associated software an important target for optimization.
 
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
+The standard way to identify a read is to map it to a known reference
+sequence, typically a genome. Work on short-read mappers has been
+traditionally focused on improving the speed, reducing the memory
+footprint and increasing the accuracy. Another important focus has been to
+develop variations to address the actual needs of the user, as different
+problems often entail different read types (e.g., compare CHiP-seq and
+Hi-C).
+
+Meanwhile, progress has been more limited on another aspect of the mapping
+process: \emph{faithfulness}. Mapping algorithms are heuristics, so there
+is always a chance that the proposed location of a read is wrong.
+Faithfulness is the capacity to correctly estimate this probabilty.
+Importantly, one can reduce the probability of errors without having to
+measure it, so accuracy and faithfulness are usually unrelated.
+
+The importance of faithfulness is recognized in the specifications of the
+SAM format \cite{1} that include a \emph{mapping quality} score. The
+standard defines it as $-10 \cdot \log_{10}Pr$\{mapping position is
+wrong\}, but some mappers use a qualitative scale (e.g., STAR), and
+some others do not compute it (e.g., GEM). As for the mappers that comply
+with the SAM standard, the scores are undocumented, causing
+puzzlment and frustration\footnote{http://www.acgt.me/blog/2015/3/17/more-madness-with-mapq-scores-aka-why-bioinformaticians-hate-poor-and-incomplete-software-documentation}.
+
+Achieving faithful read mapping is a hard problem, for which this is
+presently no solution. Yet, this is an important challenge for the
+following reasons:
+$i$ in many applications it is essential to know the risk associated with
+every read (e.g., contaminated material such as ancient DNA);
+$ii$ a mapper is easier to use if error rates are what they claim to
+be;
+$iii$ good calibrations open opportunities to improve the speed-accuracy
+tradeoff.
+
+We recently proposed a strategy to compute the error rate of different
+seeding strategies used in short-read mappers \cite{1}. This strategy
+borrows some basic concepts from analytic combinatorics \cite{1} to
+develop a formal computation framework. Here we present a C implementation
+of this framework in a library called Sesame. We also develop a
+statistical method to estimate the parameters required to compute seeding
+probabilities. We demonstrate the feasibility of our approach by
+developing a naive mapper based on Sesame. Not only is this mapper
+faithful, but it also reveals the existence of ``super reads'' that can be
+mapped with much higher confidence than was previously thought possible.
+
+
+
 \begin{align*}
 &\mathrm{Ascorbate} + \mathrm{EDTA} \cdot \mathrm{Fe}^{3+} \to
 \hbox{Oxidized ascorbate}
