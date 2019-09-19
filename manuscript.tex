@@ -39,30 +39,7 @@ Accepted March 1, 2009}
 \maketitle
 
 \begin{abstract}
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text.
+Abstract will come later.
 \end{abstract}
 
 
@@ -85,7 +62,7 @@ Hi-C).
 Meanwhile, progress has been more limited on another aspect of the mapping
 process: \emph{faithfulness}. Mapping algorithms are heuristics, so there
 is always a chance that the proposed location of a read is wrong.
-Faithfulness is the capacity to correctly estimate this probabilty.
+Faithfulness is the capacity to correctly estimate this probability.
 Importantly, one can reduce the probability of errors without having to
 measure it, so accuracy and faithfulness are usually unrelated.
 
@@ -95,7 +72,7 @@ standard defines it as $-10 \cdot \log_{10}Pr$\{mapping position is
 wrong\}, but some mappers use a qualitative scale (e.g., STAR), and
 some others do not compute it (e.g., GEM). As for the mappers that comply
 with the SAM standard, the scores are undocumented, causing
-puzzlment and frustration\footnote{http://www.acgt.me/blog/2015/3/17/more-madness-with-mapq-scores-aka-why-bioinformaticians-hate-poor-and-incomplete-software-documentation}.
+puzzlement and frustration\footnote{http://www.acgt.me/blog/2015/3/17/more-madness-with-mapq-scores-aka-why-bioinformaticians-hate-poor-and-incomplete-software-documentation}.
 
 Achieving faithful read mapping is a hard problem, for which this is
 presently no solution. Yet, this is an important challenge for the
@@ -118,8 +95,6 @@ developing a naive mapper based on Sesame. Not only is this mapper
 faithful, but it also reveals the existence of ``super reads'' that can be
 mapped with much higher confidence than was previously thought possible.
 
-
-
 \begin{align*}
 &\mathrm{Ascorbate} + \mathrm{EDTA} \cdot \mathrm{Fe}^{3+} \to
 \hbox{Oxidized ascorbate}
@@ -129,23 +104,7 @@ mapped with much higher confidence than was previously thought possible.
 \mathrm{EDTA} \cdot \mathrm{Fe}^{3+} + \cdot
 \mathrm{OH} + \mathrm{OH}^-
 \end{align*}
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
 
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
 % **************************************************************
 % Keep this command to avoid text of first page running into the
 % first page footnotes
@@ -290,20 +249,102 @@ Text. Text. Text. Text.
 
 \section{RESULTS}
 
-\subsection{Results subsection one}
+\subsection{The Sesame library}
 
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text.
-Text. Text. Text. Text. Text. Text. Text. Text. Text.
+% !! IMPORTANT !! %
+% Say something about the seeds. In particular, it is important to
+% mention that we do not do spaced seeds.
+
+We wrote a C library to compute seeding probabilities from the theoretical
+results presented in \cite{1}. Briefly, the strategy was to represent
+reads and off-target sequences in a custom combinatorial alphabet, specify
+the generating functions of basic words and define a language based on a
+transfer matrix. The powers of the transfer matrix contain the generating
+functions of the reads of interest, from which we can extract their
+probability of ocurrence.
+
+The probability that a read contains a seed depends on the problem and on
+the read. Sesame computes seeding probabilities from five user-specified
+parameters. The problem-specific parameters are known to the user and
+consist of the read length $k$, the error rate $p$ and the minimum seed
+size $\gamma$. The read-specific parameters are unknown to the user and
+consist of the number of duplicates of the target $N$, and their average
+sequence divergence $\mu$. We will explain below how to estimate them in
+practice.
+
+The Sesame library was built for performance so that it can be integrated
+in mapping frameworks. This means that computations are performed only
+once for a given set of parameters and memoized for later retrieval. The
+parameters $k$, $p$ and $\gamma$ are constant throughout the sequencing
+run, but $N$ and $\mu$ must be computed for every read. By default, Sesame
+collapses the $(N, \mu)$ pairs to a coarse grid of $15 \times 3=45$
+values. Computing all 45 values takes a few minutes on modern hardware,
+which is negligible compared to mapping a sequencing run with several
+million reads. In addition, the computed values can be saved on disk for
+reuse in later runs. The user interface and available options are further
+described on the main page of the repository.
+
+
+\subsection{Comparing seeding strategies}
+
+The seeding step is an essential part of read mapping. Choosing an
+appropriate strategy is important, but this is usually based on limited
+testing. With accurate seeding probabilities, it is possible to compare
+the merits of different seeding strategies, which can be useful for
+choosing a seed type or a minimum seed length.
+
+As an example, we compare the default strategies of BWA and Bowtie2 at 1\%
+sequencing error. Note that both mappers use advanced methods to refine
+the seeding heuristic, so the comparison does not reflect their
+performance. It is nevertheless useful to give a baseline for the
+potential of each strategy. The default strategy of BWA it to use MEM
+seeds of minimum size 19; that of Bowtie2 is to use seeds of size 16 every
+ten nucleotides (referred to here as skip-9 seeds).
+
+The worst seeding outcome is that the set of candidate loci contains only
+paralogues of target. In this case the target is lost, but worse, the
+mapper is on a wrong path and may return a paralogue instead. It is thus
+important to control the probability of this outcome referred to as
+off-target seeding.
+
+Figure~\ref{fig:mortal_kombat} shows the off-target probabilities computed
+by Sesame. Counter-intuitively, the probability initially increases with
+the read size for MEM seeds. It turns out that off-target MEM seeds are
+common in short reads that contain errors. Since longer reads have a
+higher chance of containing an error, the off-target rate initially
+increases. This effect dampens so that all the probabilities eventually
+decrease exponentially, albeit at different rates.
+
+For skip seeds, the off-target rates decrease in staircase with a drop
+every 10 nucleotides. Indeed, the seeds are exactly the same if the read
+length stays within the same decade. The curves show an overal linear
+trend and have the same asymptotic rate.
+
+From this we draw the important conclusion that the performance of skip
+seeds degrades much less than MEM seeds when the target contains
+paralogues. Skip seeds are thus better suited for sensitive mapping in
+repeated sequences. Figure~\ref{fig:mortal_kombat} also shows that the
+performance of skip seeds on this criterion is simply better than MEM
+seeds. However one has to bear in mind that we compare MEM seeds of size
+19 with skip seeds of size 16: the gain in sensitivity comes at the cost
+of a substantially larger candidate set. In practice the candidate set
+must be further filtered, so the final performance cannot be as high as
+suggested by Figure~\ref{fig:mortal_kombat}.
+
+Another interesting observation is that for MEM seeds, the off-target rate
+is above $10^{-3}$ for reads of 50 nucleotides or less, meaning that
+beating quality 30 is not straightforward in these conditions. It is
+important to remember that mapping cannot be wrong if the target has no
+paralogue (because it is trivial to recognize that false positives have no
+homology with the read). Therefore, the main strategy to reach high
+mapping confidence with MEM seeds is not to reduce the minimum seed size,
+but to ascertain that the target is a unique sequence. We will show how to
+do achieve this below.
+
+\section{Estimating parameters $N$ and $\mu$}
+
+A key component of...
+
 
 \begin{table}[b]
 \tableparts{%
