@@ -323,27 +323,99 @@ trend and have the same asymptotic rate.
 From this we draw the important conclusion that the performance of skip
 seeds degrades much less than MEM seeds when the target contains
 paralogues. Skip seeds are thus better suited for sensitive mapping in
-repeated sequences. Figure~\ref{fig:mortal_kombat} also shows that the
-performance of skip seeds on this criterion is simply better than MEM
-seeds. However one has to bear in mind that we compare MEM seeds of size
-19 with skip seeds of size 16: the gain in sensitivity comes at the cost
-of a substantially larger candidate set. In practice the candidate set
-must be further filtered, so the final performance cannot be as high as
-suggested by Figure~\ref{fig:mortal_kombat}.
+repeated sequences. Incidentally, this Figure~\ref{fig:mortal_kombat}
+shows that it is suboptimal for a MEM-based mapper to all the candidate
+loci when there is more than a handful of them: if the target has more
+than 20 paralogues, the mapping quality will remain low even when the
+output is correct. A better strategy is to either bail out or switch to a
+more sensitive seeding method (BWA uses a re-seeding policy).
 
-Another interesting observation is that for MEM seeds, the off-target rate
-is above $10^{-3}$ for reads of 50 nucleotides or less, meaning that
-beating quality 30 is not straightforward in these conditions. It is
-important to remember that mapping cannot be wrong if the target has no
-paralogue (because it is trivial to recognize that false positives have no
-homology with the read). Therefore, the main strategy to reach high
-mapping confidence with MEM seeds is not to reduce the minimum seed size,
-but to ascertain that the target is a unique sequence. We will show how to
-do achieve this below.
+A related observation is that for MEM seeds, the off-target rate is above
+$10^{-3}$ for reads of 50 nucleotides or less, meaning that beating
+quality 30 is not straightforward in these conditions. It is important to
+remember that mapping cannot be wrong if the target has no paralogue
+(because it is trivial to recognize that false positives have no homology
+with the read). Therefore, the main strategy to reach high mapping
+confidence with MEM seeds is not to reduce the minimum seed size, but to
+ascertain that the target is a unique sequence. We will show how to do
+achieve this below.
 
-\section{Estimating parameters $N$ and $\mu$}
+Figure~\ref{fig:mortal_kombat} suggests that the performance of skip seeds
+is better than that of MEM seeds. However one has to bear in mind that we
+compare MEM seeds of size 19 with skip seeds of size 16: the gain in
+sensitivity comes at the cost of a larger candidate set. In practice such
+a large candidate set must be further filtered (Bowtie2 does this with a
+priority policy), so the final performance of skip seeds cannot be as high
+as suggested in the figure because of speed constraints.
 
-A key component of...
+
+\section{Estimating $N$ and $\mu$}
+
+Estimating the two read-dependent parameters $N$ and $\mu$ is essential to
+compute seeding probabilities. Recall that $N$ is the number paralogues of
+the target ($N=0$ means that it is unique) and that $\mu$ is the sequence
+divergence (the average fraction of mismatches between a paralogue and the
+target).
+
+The key observation is that the seeding algorithm can also reveal the
+paralogue structure of the target. Queries in the FM index are carried out
+using an algorithm known as the backward search. Extending the query one
+nucleotide at a time, the backward search returns the number of matching
+sequences in the genome. The decaying number of hits depends on how many
+paralogues of the target are present in the genome, and how similar they
+are with each other. It is thus possible to use the series of the backward
+search to estimate $N$ and $\mu$.
+
+Writing the likelihood of the process is straightforward if we assume that
+nucleotides are used uniformly at random in the genome. The difficulty is
+that the first iterations of the backward search are uninformative. For
+instance, a query of length 10 is expected to have $\geq 3000$ hits in
+the genome, so the potential paralogues of the target are hidden among so
+many random hits. In practice, we ignore the first iterations until the
+number of random hits is lower than 1. The information is labelled as
+missing and the likelihood is updated accordingly. This gives a function
+that can now by maximized with respect to $N$ and $\mu$.
+
+Initial simulations revealed that the maximum likelihood estimates of $N$
+and $\mu$ have a large variance. To mitigate this effect, we opted for a
+grid search where we test only plausible values of $\mu$ and compute the
+associated $N$ (see Methods). This gave a fast algorithm forced to produce
+reasonable estimates.
+
+We initially tested this method on the read, gathering the series of decay
+during the seeding process. However, we quickly realized that this method
+routinely missed paralogues because of sequencing errors. Using mapping as
+an error correction mechanism, we tested a prototype estimating $N$ and
+$\mu$ from the sequence of the best hit and obtained significantly better
+results, so we settle for this option, even though it is slower. It is of
+course possible that the best hit is not the target, but if it is a
+paralogue, the estimated values of $N$ and $\mu$ should be similar.
+
+The estimation strategy is depicted in Figure~\ref{fig:strategy}. The
+putative target is segmented in windows of 30 nucleotides overlapping by
+20 nucleotides. The grid search is run a every window in both the foward
+and reverse orientation, ignoring the first 20 iterations of the backward
+search. The windowing approach accomodates the fact that only some
+regions of the target may be repeated (e.g., if the read straddles a
+transposon). Finally, we take the median values of $N$ and $\mu$ as
+representative for the whole sequence.
+
+
+\section{Super reads}
+
+While testing the estimation algorithm on reads of size 50, we observed
+that a sub-population of them had mapping error rates below $10^{-5}$.
+This is surprising in regard of Figure~\ref{fig:mortal_kombat}a because in
+a genome where half of the sequences are duplicated, the error rate should
+be $\approx 1/2 10^{-3}$. We reasoned that non-repeated sequences must be
+overrepresented in this sub-population of reads.
+
+Those reads are characterized by two facts: $i.$ they have at most one
+difference with the best hit and $ii.$ the backward search depicted in
+Figure~\ref{fig:strategy} retrived only one sequence on each window.
+Individually, these facts are not uncommon in mismapped reads, but
+together, they leave little space for error.
+
 
 
 \begin{table}[b]

@@ -23,7 +23,7 @@ lines(k, mem[8,], col="grey15", lwd=1.40)
 lines(k, mem[9,], col="grey10", lwd=1.45)
 lines(k, mem[10,], col="grey5", lwd=1.50)
 
-title(xlab="Size (nt)", ylab="Off-target rate (log10)",
+title(xlab="Read size (nt)", ylab="Off-target rate (log10)",
    col.lab="grey25", line=2.2)
 axis(side=1, cex.axis=.8, col="grey50", col.axis="grey25")
 axis(side=2, cex.axis=.8, col="grey50", col.axis="grey25")
@@ -48,7 +48,7 @@ lines(k, skip[8,], col="grey15", lwd=1.40)
 lines(k, skip[9,], col="grey10", lwd=1.45)
 lines(k, skip[10,], col="grey5", lwd=1.50)
 
-title(xlab="Size (nt)", ylab="Off-target rate (log10)",
+title(xlab="Read size (nt)", ylab="Off-target rate (log10)",
    col.lab="grey25", line=2.2)
 axis(side=1, cex.axis=.8, col="grey50", col.axis="grey25")
 axis(side=2, cex.axis=.8, col="grey50", col.axis="grey25")
