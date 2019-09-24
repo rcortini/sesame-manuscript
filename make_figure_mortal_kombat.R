@@ -33,6 +33,8 @@ legend(x="bottomleft", lwd=c(1.05, 1.10, 1.15, 1.20, 1.25, 1.30,
    "grey35", "grey30", "grey25", "grey20", "grey15", "grey10", "grey5"),
    legend=c("1","5","10","20","50","100","200","400", "750","1500"),
    inset=.02, bg="white", box.col="white", text.col="grey25")
+legend(x="topright", inset=.02, bg="white", box.col="white",
+   legend="MEM seeds", text.col="grey25")
 
 plot(k, skip[1,], type="n",
    panel.first=grid(), ylim=ylim,
@@ -52,5 +54,8 @@ title(xlab="Read size (nt)", ylab="Off-target rate (log10)",
    col.lab="grey25", line=2.2)
 axis(side=1, cex.axis=.8, col="grey50", col.axis="grey25")
 axis(side=2, cex.axis=.8, col="grey50", col.axis="grey25")
+
+legend(x="topright", inset=.02, bg="white", box.col="white",
+   legend="Skip seeds", text.col="grey25")
 
 dev.off()
